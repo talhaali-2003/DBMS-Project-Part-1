@@ -227,43 +227,6 @@ public class userDAO
     	return false;
     }
     
-    
-    public void init() throws SQLException, FileNotFoundException, IOException{
-    	connect_func();
-        statement =  (Statement) connect.createStatement();
-        
-        String[] INITIAL = {"drop database if exists project; ",
-					        "create database project; ",
-					        "use project; ",
-					        "drop table if exists User; ",
-					        ("CREATE TABLE if not exists User( " +
-					            "username VARCHAR(255) UNIQUE PRIMARY KEY," +
-					            "password VARCHAR(255) NOT NULL, " +
-					            "role VARCHAR(50) "+");")
-        					};
-        String[] TUPLES = {("insert into User(username, password, role)"+
-        			"values ('susie', 'susie1234', 'Client'),"+
-        					"('don', 'don123', 'Client')," +
-        					"('margarita', 'margarita1234', 'Client'),"+
-			    			"('root','pass1234', 'Admin root');")
-			    			};
-        
-        //for loop to put these in database
-        for (int i = 0; i < INITIAL.length; i++)
-        	statement.execute(INITIAL[i]);
-        for (int i = 0; i < TUPLES.length; i++)	
-        	statement.execute(TUPLES[i]);
-        disconnect();
-    }
-    
-    
-   
-    
-    
-    
-    
-    
-	
-	
+
 
 }

@@ -25,7 +25,7 @@ public class ControlServlet extends HttpServlet {
 	    private userDAO userDAO = new userDAO();
 	    private clientDAO clientDAO = new clientDAO();
 	    private treeRequestDAO treeRequestDAO = new treeRequestDAO();
-	    private quoteDAO quoteDAO = new quoteDAO();
+	    private quoteDAO QuoteDAO = new quoteDAO();
 	    private orderOfWorkDAO orderOfWorkDAO = new orderOfWorkDAO();
 	    private billDAO billDAO = new billDAO();
 	    
@@ -43,7 +43,7 @@ public class ControlServlet extends HttpServlet {
 	    	userDAO = new userDAO();
 	    	clientDAO = new clientDAO();
 	    	treeRequestDAO = new treeRequestDAO();
-	    	quoteDAO = new quoteDAO();
+	    	QuoteDAO = new quoteDAO();
 	    	orderOfWorkDAO = new orderOfWorkDAO();
 	    	billDAO = new billDAO();
 	    	currentUser= "";
@@ -64,6 +64,9 @@ public class ControlServlet extends HttpServlet {
         		break;
         	case "/register":
         		register(request, response);
+        		break;
+        	case "/registerClient":
+        		registerClient(request, response);
         		break;
         	case "/initialize":
         		Initialize(request,response);
@@ -97,10 +100,29 @@ public class ControlServlet extends HttpServlet {
 	     
 	        System.out.println("listPeople finished: 111111111111111111111111111111111111");
 	    }
+	    
+	    @SuppressWarnings("unused")
+		private void listQuotes(HttpServletRequest request, HttpServletResponse response)
+	            throws SQLException, IOException, ServletException {
+	        System.out.println("listQuotes started: 00000000000000000000000000000000000");
+
+	     
+	        List<quote> listQuote = QuoteDAO.listAllQuotes();
+	        request.setAttribute("listQuotes", listQuote);       
+	        RequestDispatcher dispatcher = request.getRequestDispatcher("QuoteList.jsp");       
+	        dispatcher.forward(request, response);
+	     
+	        System.out.println("listQuotes finished: 111111111111111111111111111111111111");
+	    }
 	    	        
 	    private void rootPage(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException, SQLException{
 	    	System.out.println("root view");
 			request.setAttribute("listUser", userDAO.listAllUsers());
+			request.setAttribute("listClients", clientDAO.listAllClients());
+			request.setAttribute("listQuotes", QuoteDAO.listAllQuotes());
+			request.setAttribute("listTreeRequests", treeRequestDAO.listAllRequests());
+			request.setAttribute("listOrderOfWork", orderOfWorkDAO.listAllOrders());
+			request.setAttribute("listBills", billDAO.listAllBills());
 	    	request.getRequestDispatcher("rootView.jsp").forward(request, response);
 	    }
 	    
@@ -150,9 +172,13 @@ public class ControlServlet extends HttpServlet {
 		   	 		System.out.println("Registration Successful! Added to database");
 		            user users = new user(username, password, role);
 		   	 		userDAO.insert(users);
-		   	 		response.sendRedirect("login.jsp");
-	   	 		}
-		   	 	else {
+		   	 		
+		   	 		if ("client".equals(role)) {
+		   	 			response.sendRedirect("clientregistration.jsp");
+		   	 		} else {
+		   	 			response.sendRedirect("login.jsp");
+		   	 		}
+	   	 	}	else {
 		   	 		System.out.println("Username taken, please enter new username");
 		    		 request.setAttribute("errorOne","Registration failed: Username taken, please enter a new username.");
 		    		 request.getRequestDispatcher("register.jsp").forward(request, response);
@@ -164,20 +190,28 @@ public class ControlServlet extends HttpServlet {
 	   		 request.getRequestDispatcher("register.jsp").forward(request, response);
 	   	 	}
 	    }    
+	    
+	    private void registerClient(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	        String firstName = request.getParameter("firstName");
+	        String lastName = request.getParameter("lastName");
+	        String address = request.getParameter("address");
+	        String creditCard = request.getParameter("creditCard");
+	        String phoneNumber = request.getParameter("phoneNumber");
+	        String email = request.getParameter("email");
+	        client Client = new client(firstName, lastName, address, creditCard, phoneNumber, email);
+	        
+	        clientDAO.insert(Client);
+	        System.out.println("Client Registration Successful!");
+	        response.sendRedirect("clientportal.jsp");
+	        
+	    }
+
 	    private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	    	currentUser = "";
         		response.sendRedirect("login.jsp");
         	}
 	
-	    
-
-	     
-        
-	    
-	    
-	    
-	    
-	    
+    
 }
 	        
 	        
